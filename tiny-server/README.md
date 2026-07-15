@@ -50,10 +50,6 @@ curl http://localhost:3000/api/time
 
 ```
 mini-backend/
-├── server.js   # the entire server
+├── server.js   # the server
 └── README.md
 ```
-
-## License
-
-MIT
