@@ -190,14 +190,3 @@ The original version of this project stored tasks in a Python list that lived on
 - Demonstrates a key backend engineering principle: **the API layer and the storage layer are independent** — you can change one without changing the other
 
 ---
-
-## Possible Next Steps
-
-- Let the database auto-generate `id` values (`AUTOINCREMENT`) instead of requiring the client to supply one
-- Add a `description` field and other optional task metadata
-- Add filtering/sorting/pagination to `GET /tasks`
-- Replace raw `sqlite3` queries with an ORM (SQLAlchemy) for more complex apps
-- Add automated tests with `pytest` and FastAPI's `TestClient`
-- Containerize the app with Docker
-
----
