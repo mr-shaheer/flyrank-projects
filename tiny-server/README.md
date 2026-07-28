@@ -1,55 +1,82 @@
-# mini-backend
+# Task Manager API (FastAPI)
 
-The smallest possible backend: a dependency-free Node.js server with two JSON endpoints.
+A simple RESTful API built with FastAPI for managing tasks, using in-memory storage.
 
 ## Features
 
-- 🪶 Zero dependencies — just Node's built-in `http` module
-- ⚡ Two endpoints, instant startup
-- 🧪 Easy to test from a browser or the command line
+- Create, read, update, and delete tasks (CRUD)
+- In-memory data storage (no database required)
+- Automatic request/response validation with Pydantic
+- Interactive API docs via Swagger UI
 
-## Endpoints
+## Requirements
 
-| Method | Path          | Response                                |
-|--------|---------------|-------------------------------------------|
-| `GET`  | `/api/hello`  | `{"message":"Hello, world!"}`             |
-| `GET`  | `/api/time`   | `{"time":"<current ISO timestamp>"}`      |
-| `GET`  | *anything else* | `404` — `{"error":"Not found"}`         |
+- Python 3.8+
+- FastAPI
+- Uvicorn
 
-## Getting started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (any recent version — no packages to install)
-
-### Run it
+## Installation
 
 ```bash
-node server.js
+pip install fastapi uvicorn
 ```
 
-The server starts at **http://localhost:3000**.
-
-## Testing the endpoints
-
-**In a browser**, just open:
-- http://localhost:3000/api/hello
-- http://localhost:3000/api/time
-
-**With curl:**
+## Running the Server
 
 ```bash
-curl http://localhost:3000/api/hello
-# {"message":"Hello, world!"}
-
-curl http://localhost:3000/api/time
-# {"time":"2026-07-15T12:34:56.789Z"}
+uvicorn server:app --reload
 ```
 
-## Project structure
+The API will be available at `http://127.0.0.1:8000`.
 
+Interactive docs: `http://127.0.0.1:8000/docs`
+
+## API Endpoints
+
+| Method | Endpoint           | Description      |
+|--------|--------------------|-------------------|
+| GET    | /                  | Health check      |
+| POST   | /tasks             | Create a task     |
+| GET    | /tasks             | Get all tasks     |
+| GET    | /tasks/{task_id}   | Get a task        |
+| PUT    | /tasks/{task_id}   | Update a task     |
+| DELETE | /tasks/{task_id}   | Delete a task     |
+
+## Task Model
+
+```json
+{
+  "id": 1,
+  "title": "Buy groceries",
+  "completed": false
+}
 ```
-mini-backend/
-├── server.js   # the server
-└── README.md
+
+## Example Usage
+
+**Create a task:**
+
+```bash
+curl -X POST http://127.0.0.1:8000/tasks \
+  -H "Content-Type: application/json" \
+  -d '{"id": 1, "title": "Buy groceries", "completed": false}'
 ```
+
+**Get all tasks:**
+
+```bash
+curl http://127.0.0.1:8000/tasks
+```
+
+## Status Codes
+
+- 200 OK
+- 201 Created
+- 400 Bad Request
+- 404 Not Found
+- 500 Internal Server Error
+
+## Notes
+
+- Data is stored in memory and will reset whenever the server restarts.
+- This project is intended as a learning/assignment exercise.
