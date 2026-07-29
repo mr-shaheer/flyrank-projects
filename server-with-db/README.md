@@ -180,10 +180,6 @@ curl -X DELETE "http://127.0.0.1:8000/tasks/1"
 
 ---
 
-## Why SQLite Instead of an In-Memory List?
-
-The original version of this project stored tasks in a Python list that lived only in memory — meaning all data was lost every time the server restarted. Swapping in SQLite means:
-
 - **Data persists** across server restarts
 - The app behaves closer to a **real production backend**
 - It's a natural stepping stone toward using more advanced databases (PostgreSQL, MySQL) or an ORM like SQLAlchemy later on
