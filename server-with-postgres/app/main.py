@@ -11,7 +11,6 @@ app = FastAPI()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# The only line that changes when storage is swapped.
 repo = PostgresTaskRepository(DATABASE_URL)
 service = TaskService(repo)
 
