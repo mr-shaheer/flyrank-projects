@@ -13,7 +13,7 @@ A lightweight authentication API built with **FastAPI** and **Supabase Auth**. I
 ## Tech Stack
 
 - [FastAPI](https://fastapi.tiangolo.com/) — web framework
-- [Supabase](https://supabase.com/) (`supabase-py`) — auth backend
+- [Supabase](https://supabase.com/) — auth backend
 - [Uvicorn](https://www.uvicorn.org/) — ASGI server
 - [Pydantic](https://docs.pydantic.dev/) — request validation
 - [python-dotenv](https://pypi.org/project/python-dotenv/) — environment variable loading
@@ -22,7 +22,7 @@ A lightweight authentication API built with **FastAPI** and **Supabase Auth**. I
 
 ```
 auth-server/
-├── main.py               # FastAPI app and route definitions
+├── main.py                # FastAPI app and route definitions
 ├── supabase_client.py     # Supabase client setup (admin + auth clients)
 ├── .env.example           # Example environment variables
 └── .gitignore
