@@ -189,7 +189,6 @@ Common status codes:
 - `401` — Invalid credentials, missing/invalid/expired token
 - `201` — Resource created (signup)
 - `204` — Success with no content (logout)
-
 ## Environment Variables
 
 | Variable | Description |
