@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Agentic Researcher - Case Study</title>
+ <meta name="description" content="A 3-agent pipeline that turns one query into a fully cited research report. Built with OpenAI Agents SDK, Gemini, and Tavily.">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/svg+xml" href="../images/icon.png">
+ <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+ <nav class="nav">
+ <div class="nav-inner">
+ <a href="../index.html" class="nav-brand">shaheer</a>
+ <ul class="nav-links">
+ <li><a href="../index.html">Home</a></li>
+ <li><a href="../projects.html">Projects</a></li>
+ <li><a href="../about.html">About</a></li>
+ <li><a href="../contact.html">Contact</a></li>
+ </ul>
+ <div class="nav-social">
+ <a href="https://github.com/mr-shaheer" target="_blank" rel="noopener" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+ <a href="https://www.linkedin.com/in/mr-shaheer/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+ </div>
+ <button class="hamburger" aria-label="Toggle menu">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </nav>
+
+ <!-- Header -->
+ <header class="case-study-header">
+ <div class="container">
+ <div class="hero-label">Case Study</div>
+ <h1 class="hero-title">Agentic Researcher</h1>
+ <p class="hero-subtitle">Autonomous research pipeline: plan → search → write.<br>Three specialized agents orchestrated by a supervisor with dual entry points.</p>
+ <div class="case-study-meta">
+ <span class="pill">OpenAI Agents SDK</span>
+ <span class="pill">Google Gemini</span>
+ <span class="pill">Tavily Search API</span>
+ <span class="pill">FastAPI</span>
+ <span class="pill">ChatKit</span>
+ <span class="pill">Pydantic Settings</span>
+ </div>
+ </div>
+ </header>
+
+ <!-- Body -->
+ <article class="case-study-body">
+ <div class="container">
+
+ <h3>Overview</h3>
+ <p>Agentic Researcher takes a single topic and returns a fully structured, cited research report without further input. It's not one big prompt — it's three specialized agents that pass work down a pipeline: a <strong>Planner</strong> that breaks the topic into a research strategy, a <strong>Researcher</strong> that hits the live web via Tavily, and a <strong>Writer</strong> that synthesizes everything into a clean markdown report. A central supervisor built on the OpenAI Agents SDK orchestrates the handoffs, running on Google Gemini through Gemini's OpenAI-compatible endpoint.</p>
+
+ <h3>Architecture</h3>
+ <div class="diagram">
+ <svg viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+ <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+ <polygon points="0 0, 10 3.5, 0 7" fill="#6B7280"/>
+ </marker>
+ <marker id="arrowhead-accent" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+ <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6"/>
+ </marker>
+ </defs>
+
+ <rect class="diagram-box" x="70" y="20" width="140" height="44" rx="8"/>
+ <text class="diagram-text" x="140" y="42">CLI (main.py)</text>
+
+ <rect class="diagram-box" x="500" y="20" width="150" height="44" rx="8"/>
+ <text class="diagram-text" x="575" y="42">Browser (ChatKit UI)</text>
+
+ <line class="diagram-arrow" x1="210" y1="42" x2="310" y2="100"/>
+ <line class="diagram-arrow" x1="500" y1="42" x2="410" y2="100"/>
+
+ <rect class="diagram-box accent" x="260" y="100" width="200" height="44" rx="8"/>
+ <text class="diagram-text" x="360" y="124">Main Agent (Supervisor)</text>
+
+ <line class="diagram-arrow accent" x1="360" y1="144" x2="360" y2="170"/>
+
+ <rect class="diagram-box" x="260" y="170" width="200" height="44" rx="8"/>
+ <text class="diagram-text" x="360" y="192">Planner</text>
+ <text class="diagram-text small" x="360" y="205">breaks query into research plan</text>
+
+ <line class="diagram-arrow accent" x1="360" y1="214" x2="360" y2="240"/>
+
+ <rect class="diagram-box" x="260" y="240" width="200" height="44" rx="8"/>
+ <text class="diagram-text" x="360" y="262">Researcher</text>
+ <text class="diagram-text small" x="360" y="275">live Tavily web search</text>
+
+ <line class="diagram-arrow accent" x1="360" y1="284" x2="360" y2="310"/>
+
+ <rect class="diagram-box" x="260" y="310" width="200" height="44" rx="8"/>
+ <text class="diagram-text" x="360" y="332">Writer</text>
+ <text class="diagram-text small" x="360" y="345">synthesizes final report</text>
+ </svg>
+ </div>
+
+ <h3>What's Technically Interesting</h3>
+ <ul>
+ <li><strong>Two entry points</strong> (CLI + a FastAPI/ChatKit web server) drive the same agent graph - no duplicated logic.</li>
+ <li><strong>Input guardrails</strong> run identically in both the CLI and web UI, and rejections surface as a normal chat message instead of a crash.</li>
+ <li><strong>Conversation state persists</strong> via a shared SQLite session across both interfaces.</li>
+ <li><strong>Runs entirely on free-tier APIs</strong> (Gemini + Tavily) - zero cost to operate.</li>
+ </ul>
+
+ <h3>Stack</h3>
+ <div class="badge-row">
+ <span class="badge">OpenAI Agents SDK</span>
+ <span class="badge">Google Gemini (gemini-2.5-flash)</span>
+ <span class="badge">Tavily Search API</span>
+ <span class="badge">FastAPI</span>
+ <span class="badge">ChatKit</span>
+ <span class="badge">Pydantic Settings</span>
+ </div>
+
+ <a href="https://github.com/mr-shaheer/Agentic_Researcher" target="_blank" rel="noopener" class="case-study-link">
+ <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> View source on GitHub
+ </a>
+
+ </div>
+ </article>
+
+ <!-- Footer -->
+ <footer class="footer">
+ <div class="container">
+ <div class="footer-inner">
+ <span class="footer-copy">© 2026 Shaheer. All rights reserved.</span>
+ <div class="footer-links">
+ <a href="../index.html">Home</a>
+ <a href="../projects.html">Projects</a>
+ <a href="../about.html">About</a>
+ <a href="../contact.html">Contact</a>
+ </div>
+ <div class="footer-social">
+ <a href="https://github.com/mr-shaheer" target="_blank" rel="noopener" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+ <a href="https://www.linkedin.com/in/mr-shaheer/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+ </div>
+ </div>
+ </div>
+ </footer>
+
+ <script src="../js/main.js"></script>
+</body>
+</html>
