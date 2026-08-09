@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Repro Tracker - Case Study</title>
+ <meta name="description" content="Bug-report agent that reproduces bugs in a live sandbox. Built with OpenAI Agents SDK, E2B, and Playwright.">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+ <link rel="icon" type="image/svg+xml" href="../images/icon.png">
+ <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+ <!-- Navigation -->
+ <nav class="nav">
+ <div class="nav-inner">
+ <a href="../index.html" class="nav-brand">shaheer</a>
+ <ul class="nav-links">
+ <li><a href="../index.html">Home</a></li>
+ <li><a href="../projects.html">Projects</a></li>
+ <li><a href="../about.html">About</a></li>
+ <li><a href="../contact.html">Contact</a></li>
+ </ul>
+ <div class="nav-social">
+ <a href="https://github.com/mr-shaheer" target="_blank" rel="noopener" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+ <a href="https://www.linkedin.com/in/mr-shaheer/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+ </div>
+ <button class="hamburger" aria-label="Toggle menu">
+ <span></span><span></span><span></span>
+ </button>
+ </div>
+ </nav>
+
+ <!-- Header -->
+ <header class="case-study-header">
+ <div class="container">
+ <div class="hero-label">Case Study</div>
+ <h1 class="hero-title">Repro Tracker</h1>
+ <p class="hero-subtitle">Bug-report agent that reproduces bugs in a live sandbox. Reads a bug report, spins up an isolated browser, and returns a verdict with evidence.</p>
+ <div class="case-study-meta">
+ <span class="pill">OpenAI Agents SDK</span>
+ <span class="pill">E2B Sandbox</span>
+ <span class="pill">Playwright</span>
+ <span class="pill">SQLite</span>
+ </div>
+ </div>
+ </header>
+
+ <!-- Body -->
+ <article class="case-study-body">
+ <div class="container">
+
+ <h3>Overview</h3>
+ <p>Half of every bug backlog is unreproducible noise - engineers burn a morning just confirming a bug is real before anyone starts fixing it. Repro Tracker automates that step: you describe a bug, a <strong>Triage Agent</strong> parses it into a structured report, and a <strong>Reproduction Specialist</strong> spins up a real, isolated E2B sandbox, runs curl checks and Playwright browser automation against the actual URL, and returns a verdict - <span class="status-badge status-success">REPRODUCED</span>, <span class="status-badge status-error">NOT REPRODUCED</span>, or <span class="status-badge status-warning">PARTIAL</span> - with evidence like console logs and HTTP status codes attached.</p>
+
+ <h3>Architecture</h3>
+ <div class="diagram">
+ <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+ <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+ <polygon points="0 0, 10 3.5, 0 7" fill="#6B7280"/>
+ </marker>
+ <marker id="arrowhead-accent" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+ <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6"/>
+ </marker>
+ </defs>
+ <!-- User Input -->
+ <rect class="diagram-box" x="320" y="10" width="160" height="40" rx="8"/>
+ <text class="diagram-text" x="400" y="32">User input</text>
+
+ <line class="diagram-arrow" x1="400" y1="50" x2="400" y2="75"/>
+
+ <!-- Guardrail -->
+ <rect class="diagram-box accent" x="300" y="75" width="200" height="40" rx="8"/>
+ <text class="diagram-text" x="400" y="95">Guardrail</text>
+ <text class="diagram-text small" x="400" y="108">blocks prompt injection</text>
+
+ <line class="diagram-arrow accent" x1="400" y1="115" x2="400" y2="140"/>
+
+ <!-- Triage Agent -->
+ <rect class="diagram-box accent" x="280" y="140" width="240" height="40" rx="8"/>
+ <text class="diagram-text" x="400" y="162">Triage Agent</text>
+ <text class="diagram-text small" x="400" y="173">parses bug: URL, steps, severity, env</text>
+
+ <line class="diagram-arrow accent" x1="400" y1="180" x2="400" y2="210"/>
+
+ <!-- Reproduction Specialist -->
+ <rect class="diagram-box accent" x="240" y="210" width="320" height="40" rx="8"/>
+ <text class="diagram-text" x="400" y="232">Reproduction Specialist</text>
+ <text class="diagram-text small" x="400" y="243">runs inside E2B sandbox</text>
+
+ <!-- Steps -->
+ <line class="diagram-arrow" x1="400" y1="250" x2="400" y2="275"/>
+
+ <rect class="diagram-box" x="280" y="275" width="240" height="36" rx="6"/>
+ <text class="diagram-text" x="400" y="296">Step 1: curl reachability check</text>
+
+ <line class="diagram-arrow" x1="400" y1="311" x2="400" y2="328"/>
+
+ <rect class="diagram-box" x="280" y="328" width="240" height="36" rx="6"/>
+ <text class="diagram-text" x="400" y="349">Step 2: Playwright automation</text>
+
+ <line class="diagram-arrow" x1="400" y1="364" x2="400" y2="381"/>
+
+ <rect class="diagram-box" x="280" y="381" width="240" height="36" rx="6"/>
+ <text class="diagram-text" x="400" y="402">Step 3: API / backend curl tests</text>
+
+ <line class="diagram-arrow" x1="400" y1="417" x2="400" y2="434"/>
+
+ <rect class="diagram-box" x="280" y="434" width="240" height="36" rx="6"/>
+ <text class="diagram-text" x="400" y="455">Step 4: check known-issues database</text>
+
+ <line class="diagram-arrow" x1="400" y1="470" x2="400" y2="487"/>
+
+ <rect class="diagram-box" x="280" y="487" width="240" height="36" rx="6"/>
+ <text class="diagram-text" x="400" y="508">Step 5: human approval if harm</text>
+
+ <line class="diagram-arrow" x1="400" y1="523" x2="400" y2="545"/>
+
+ <!-- Verdict -->
+ <rect class="diagram-box accent" x="280" y="545" width="240" height="40" rx="8"/>
+ <text class="diagram-text" x="400" y="568">Verdict + Evidence</text>
+ </svg>
+ </div>
+
+ <h3>What's Technically Interesting</h3>
+ <ul>
+ <li><strong>Actually executes the repro steps</strong> in a live sandboxed browser instead of asking an LLM to reason about whether a bug "sounds real."</li>
+ <li><strong>Human-in-the-loop approval gate</strong> before any potentially destructive command runs.</li>
+ <li><strong>Persistent SQLite sessions</strong> retain the last 16 messages of context per conversation.</li>
+ </ul>
+
+ <h3>Stack</h3>
+ <div class="badge-row">
+ <span class="badge">OpenAI Agents SDK</span>
+ <span class="badge">E2B Sandbox</span>
+ <span class="badge">Playwright</span>
+ <span class="badge">SQLite</span>
+ </div>
+
+ <a href="https://github.com/mr-shaheer/Repro_Tracker" target="_blank" rel="noopener" class="case-study-link">
+ <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> View source on GitHub
+ </a>
+
+ </div>
+ </article>
+
+ <!-- Footer -->
+ <footer class="footer">
+ <div class="container">
+ <div class="footer-inner">
+ <span class="footer-copy">© 2026 Shaheer. All rights reserved.</span>
+ <div class="footer-links">
+ <a href="../index.html">Home</a>
+ <a href="../projects.html">Projects</a>
+ <a href="../about.html">About</a>
+ <a href="../contact.html">Contact</a>
+ </div>
+ <div class="footer-social">
+ <a href="https://github.com/mr-shaheer" target="_blank" rel="noopener" aria-label="GitHub"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+ <a href="https://www.linkedin.com/in/mr-shaheer/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+ </div>
+ </div>
+ </div>
+ </footer>
+
+ <script src="../js/main.js"></script>
+</body>
+</html>
