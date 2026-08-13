@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+
+# OpenAI Agents SDK
+openai-agents
+
+# Environment variables
+python-dotenv
+
+# HTTP retry support
+httpx
+
+# Validation (FastAPI uses Pydantic v2)
+pydantic
