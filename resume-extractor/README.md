@@ -13,7 +13,7 @@
 
 ## ✨ What it does
 
-Paste in a resume as plain text, get back exactly this — no more, no less:
+Paste in a resume as plain text, get back exactly this - no more, no less:
 
 ```json
 {
@@ -25,7 +25,7 @@ Paste in a resume as plain text, get back exactly this — no more, no less:
 }
 ```
 
-The API doesn't guess, doesn't editorialize, and doesn't give hiring advice. If the resume is ambiguous, it says so — via `needs_review: true` and a low `confidence` score — instead of hallucinating a plausible-sounding answer.
+The API doesn't guess, doesn't editorialize, and doesn't give hiring advice. If the resume is ambiguous, it says so - via `needs_review: true` and a low `confidence` score - instead of hallucinating a plausible-sounding answer.
 
 ## 📚 Table of Contents
 
@@ -48,37 +48,35 @@ The API doesn't guess, doesn't editorialize, and doesn't give hiring advice. If 
 LLMs are great at reading resumes and terrible at staying inside a schema — they invent skills, round up years of experience, and answer confidently even when the text gives them nothing to go on. This service wraps the model in enough structure that it behaves like an API endpoint, not a chatbot:
 
 - **Structured output** enforced with a Pydantic schema (`ResumeResponse`)
-- **Self-repair loop** — if the model's first answer fails validation, it gets one shot to correct itself before the request is quarantined
-- **Calibrated uncertainty** — the model is instructed to admit when it doesn't know, rather than fabricate a number
-- **Prompt-injection resistant** — text embedded in the resume that tries to hijack the model's instructions is treated as inert resume content
+- **Self-repair loop** - if the model's first answer fails validation, it gets one shot to correct itself before the request is quarantined
+- **Calibrated uncertainty** - the model is instructed to admit when it doesn't know, rather than fabricate a number
+- **Prompt-injection resistant** - text embedded in the resume that tries to hijack the model's instructions is treated as inert resume content
 
 ## 🏗️ Architecture
 
 ```
-                 ┌──────────────────┐
+                 ┌───────────────────┐
    POST          │   FastAPI route   │
  /extract-skills │  route/extractor  │
                  └────────┬──────────┘
                           │
-                 ┌────────▼──────────┐
-                 │  ExtractorService  │   retries, timeouts,
-                 │ service/extractor_ │   repair loop, logging
-                 │      service       │
-                 └────────┬──────────┘
+                 ┌────────▼──────────────────┐
+                 │  ExtractorService         │   retries, timeouts,
+                 │ service/extractor_service │   repair loop, logging
+                 └────────┬──────────────────┘
                           │
-                 ┌────────▼──────────┐
-                 │  extractor_agent   │   OpenAI Agents SDK
-                 │  agent/extractor_  │   + extract-skills.md
-                 │       agent        │     prompt
-                 └────────┬──────────┘
+                 ┌────────▼──────────────────┐
+                 │  extractor_agent          │   OpenAI Agents SDK
+                 │  agent/extractor_agent    │   + extract-skills.md
+                 └────────┬──────────────────┘
                           │
-                 ┌────────▼──────────┐
+                 ┌────────▼───────────┐
                  │  Gemini 2.5 Flash  │   via OpenAI-compatible
                  │   (model.py)       │   endpoint
                  └────────────────────┘
 ```
 
-Every request that fails schema validation twice is logged to `logs/quarantine.jsonl` instead of crashing the request loudly — and every successful call logs token usage and latency to `logs/cost.jsonl` for observability.
+Every request that fails schema validation twice is logged to `logs/quarantine.jsonl` instead of crashing the request loudly - and every successful call logs token usage and latency to `logs/cost.jsonl` for observability.
 
 ## 🚀 Quickstart
 
@@ -166,7 +164,7 @@ curl -X POST http://localhost:8000/extract-skills \
 | Status | Meaning |
 |---|---|
 | `400` | Malformed request |
-| `422` | Model output failed schema validation twice — quarantined |
+| `422` | Model output failed schema validation twice - quarantined |
 | `500` | Unhandled internal error |
 | `503` | LLM service disabled or unavailable |
 | `504` | Request to the LLM timed out |
@@ -182,16 +180,16 @@ The agent's behavior is defined entirely by [`prompts/extract-skills.md`](prompt
 
 ## 🛡️ Reliability features
 
-- **Timeouts** — every LLM call is bounded by `LLM_TIMEOUT` (default 30s)
-- **Exponential backoff retries** — up to `LLM_MAX_RETRIES` attempts on retryable errors (`429`, `500`, `502`, `503`, `504`, timeouts), with jitter
-- **Non-retryable short-circuit** — `400`/`401`/`403` fail fast instead of burning retries
-- **Self-repair** — a validation failure triggers one automatic re-prompt with the specific Pydantic error, before falling back to quarantine
-- **Cost & latency logging** — token usage, duration, retry count, and repair status logged per request to `logs/cost.jsonl`
-- **Stub mode** — set `LLM_STUB=1` to bypass the LLM entirely and get a fixed response, ideal for local development and CI
+- **Timeouts** - every LLM call is bounded by `LLM_TIMEOUT` (default 30s)
+- **Exponential backoff retries** - up to `LLM_MAX_RETRIES` attempts on retryable errors (`429`, `500`, `502`, `503`, `504`, timeouts), with jitter
+- **Non-retryable short-circuit** - `400`/`401`/`403` fail fast instead of burning retries
+- **Self-repair** - a validation failure triggers one automatic re-prompt with the specific Pydantic error, before falling back to quarantine
+- **Cost & latency logging** - token usage, duration, retry count, and repair status logged per request to `logs/cost.jsonl`
+- **Stub mode** - set `LLM_STUB=1` to bypass the LLM entirely and get a fixed response, ideal for local development and CI
 
 ## 🔒 Prompt-injection resistance
 
-Resume text is user-controlled input, which makes it an injection surface. The prompt explicitly instructs the model to treat any embedded instructions (`"ignore previous instructions..."`) as inert resume content rather than commands — and the eval suite includes adversarial cases to catch regressions:
+Resume text is user-controlled input, which makes it an injection surface. The prompt explicitly instructs the model to treat any embedded instructions (`"ignore previous instructions..."`) as inert resume content rather than commands - and the eval suite includes adversarial cases to catch regressions:
 
 ```json
 {
@@ -250,4 +248,4 @@ resume-extractor/
 | `LLM_TIMEOUT` | `30` | Per-request timeout in seconds |
 | `LLM_MAX_RETRIES` | `3` | Max attempts on retryable failures |
 
-<p align="center">Built with FastAPI, Gemini, and the OpenAI Agents SDK.</p>
+<p align="center">Built with FastAPI, Gemini and the OpenAI Agents SDK.</p>
