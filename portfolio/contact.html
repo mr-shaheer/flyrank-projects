@@ -8,7 +8,7 @@
  <link rel="preconnect" href="https://fonts.googleapis.com">
  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
- <link rel="icon" type="image/svg+xml" href="images/icon.png">
+ <link rel="icon" type="image/png" href="images/icon.png">
  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -39,11 +39,12 @@
  <div class="section-header">
  <div class="hero-label">Contact</div>
  <h2 class="section-title">Get in Touch</h2>
- <p class="section-desc">Open to full-time roles, contract engagements and collaborations on multi-agent systems. If you’re building with agents, I’d be glad to connect.
-</p>
+ <p class="section-desc">Open to full-time roles, contract engagements and collaborations on multi-agent systems. If you’re building with agents, I’d be glad to connect.</p>
  </div>
 
- <div class="contact-layout contact-layout--single">
+ <div class="contact-layout">
+
+ <!-- Left: links + what I'm looking for (unchanged) -->
  <div class="contact-info">
  <h3>Direct</h3>
  <p>You can reach me via email or LinkedIn.</p>
@@ -68,6 +69,32 @@
  <p>Teams building production grade multi-agent systems. Roles where I can own architecture and ship working systems, not just prototype demos.</p>
  </div>
  </div>
+
+ <!-- Right: form -->
+ <form id="contact-form" class="contact-form">
+ <div class="form-group">
+ <label for="cf-name">Name</label>
+ <input type="text" id="cf-name" name="name" placeholder="Your name" required>
+ </div>
+
+ <div class="form-group">
+ <label for="cf-email">Email</label>
+ <input type="email" id="cf-email" name="email" placeholder="you@example.com" required>
+ </div>
+
+ <div class="form-group">
+ <label for="cf-message">Message</label>
+ <textarea id="cf-message" name="message" placeholder="What are you building, and how can I help?" required></textarea>
+ </div>
+
+ <button type="submit" class="btn btn-primary">
+ Send Message
+ <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+ </button>
+
+ <p id="status" class="mono" style="margin-top: var(--space-md); font-size: 0.82rem; color: var(--text-muted);"></p>
+ </form>
+
  </div>
  </div>
  </section>
@@ -91,6 +118,7 @@
  </div>
  </footer>
 
+ <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
  <script src="js/main.js"></script>
 </body>
 </html>
