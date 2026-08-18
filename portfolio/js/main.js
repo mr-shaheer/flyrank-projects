@@ -3,8 +3,7 @@
      highlightActiveLink();
      initCopyButtons();
    });
-   
-   /* ---- Mobile Nav Toggle ---- */
+
    function initMobileNav() {
      const hamburger = document.querySelector('.hamburger');
      const navLinks = document.querySelector('.nav-links');
@@ -102,3 +101,32 @@
        });
      });
    }
+
+emailjs.init({
+  publicKey: "lsK6jIOL_by4JhlqX",
+});
+
+const form = document.getElementById("contact-form");
+const status = document.getElementById("status");
+
+if (form) {
+  form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      emailjs.sendForm(
+          "service_0efmmjl",
+          "template_zel4e1f",
+          this
+      )
+      .then(() => {
+          status.textContent = "Message sent successfully!";
+          status.style.color = "green";
+          form.reset();
+      })
+      .catch((error) => {
+          status.textContent = "Failed to send message.";
+          status.style.color = "red";
+          console.error(error);
+      });
+  });
+}
