@@ -1,6 +1,7 @@
-# Shaheer - Agentic AI Engineer Portfolio
+# Shaheer - Portfolio
 
-A personal portfolio website for Shaheer, an Agentic AI Engineer. The site showcases multi-agent AI projects, engineering principles, and contact details through a clean, fast, static frontend.
+A modern personal portfolio - showcasing multi-agent AI projects, technical expertise, and engineering principles through a fast, clean and responsive frontend.
+
 
 **Live site sections:** Home · Projects · About · Contact
 
