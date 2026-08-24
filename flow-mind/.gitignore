@@ -1,0 +1,62 @@
+
+# ENVIRONMENT
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
+frontend/.env.local
+
+# PYTHON / BACKEND
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# uv
+.uv-cache/
+
+# NODE / FRONTEND (Next.js)
+frontend/node_modules/
+node_modules/
+frontend/.next/
+frontend/out/
+.next/
+out/
+
+# npm / package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript build info
+frontend/*.tsbuildinfo
+*.tsbuildinfo
+frontend/next-env.d.ts
+
+# INNGEST
+.inngest/
+
+# EDITOR / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# MISC
+*.log
+dist/
+build/
