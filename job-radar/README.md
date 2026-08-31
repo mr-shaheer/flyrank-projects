@@ -1,6 +1,6 @@
 # 🎯 JobRadar
 
-**AI-powered job match & application tracker.** Scrapes fresh postings, scores them against your resume with an LLM, and emails you a ranked PDF digest — every day, automatically.
+**AI-powered job match & application tracker.** Scrapes fresh postings, scores them against your resume with an LLM, and emails you a ranked PDF digest - every day, automatically.
 
 Built as a capstone project for a Backend AI Engineering internship.
 
@@ -19,11 +19,11 @@ Built as a capstone project for a Backend AI Engineering internship.
 
 - [The problem](#-the-problem)
 - [The solution](#-the-solution)
-- [How it works — the daily flow](#-how-it-works--the-daily-flow)
+- [How it works - the daily flow](#-how-it-works--the-daily-flow)
 - [Architecture](#-architecture)
 - [The 8 concepts implemented](#-the-8-concepts-implemented)
 - [Quickstart](#-quickstart)
-- [Try it in 90 seconds — full demo walkthrough](#-try-it-in-90-seconds--full-demo-walkthrough)
+- [Try it in 90 seconds - full demo walkthrough](#-try-it-in-90-seconds--full-demo-walkthrough)
 - [API reference](#-api-reference)
 - [Environment variables](#-environment-variables)
 - [Project structure](#-project-structure)
@@ -50,7 +50,7 @@ There's no free tool that closes this loop automatically: **ingest → evaluate 
 JobRadar closes that loop as a backend service:
 
 1. **Scrapes** fresh remote job postings on a schedule.
-2. **Scores** each one against your resume using an LLM — a 0–100 fit score plus a one-sentence reason.
+2. **Scores** each one against your resume using an LLM - a 0–100 fit score plus a one-sentence reason.
 3. **Reports** your top matches as a PDF, delivered by email every morning.
 4. Lets you **track applications** (saved → applied → interviewing → offer/rejected) through a REST API.
 
@@ -58,7 +58,7 @@ No manual checking. No re-reading postings you're not qualified for. You wake up
 
 ---
 
-## 🔄 How it works — the daily flow
+## 🔄 How it works - the daily flow
 
 ```mermaid
 sequenceDiagram
@@ -75,13 +75,13 @@ sequenceDiagram
     Cron->>DB: For each user, load active resume
     DB->>LLM: Send resume + unscored job (cache miss only)
     LLM-->>DB: Return {score, reason} as structured output
-    Note over DB: Already-scored pairs are skipped —<br/>the matches table IS the cache
+    Note over DB: Already-scored pairs are skipped -<br/>the matches table IS the cache
     Cron->>PDF: Build ranked digest from all matches
     PDF->>Mail: Attach + send to user
     Mail-->>Cron: Sent (or logged & skipped if SMTP unset)
 ```
 
-The exact same steps are also exposed as on-demand API endpoints (`POST /jobs/scrape`, `POST /matches/run`, `GET /reports/me`), so you can trigger the whole cycle manually instead of waiting for 7am — useful for demos, and for re-scoring right after you update your resume.
+The exact same steps are also exposed as on-demand API endpoints (`POST /jobs/scrape`, `POST /matches/run`, `GET /reports/me`), so you can trigger the whole cycle manually instead of waiting for 7am - useful for demos, and for re-scoring right after you update your resume.
 
 ---
 
@@ -93,7 +93,7 @@ flowchart TB
         A[Browser / curl / Postman]
     end
 
-    subgraph API["FastAPI App — JWT authenticated"]
+    subgraph API["FastAPI App - JWT authenticated"]
         AUTH["/auth<br/>register · login"]
         RES["/resumes<br/>upload resume"]
         JOBS["/jobs<br/>list · scrape"]
@@ -133,7 +133,7 @@ flowchart TB
 | # | Concept | Where | Notes |
 |---|---|---|---|
 | 1 | **API endpoints** | `app/routers/` | 6 routers, full REST API, auto-documented at `/docs` |
-| 2 | **Database** | `app/models.py` | SQLite + SQLAlchemy ORM — `User`, `Resume`, `Job`, `Match`, `Application` |
+| 2 | **Database** | `app/models.py` | SQLite + SQLAlchemy ORM - `User`, `Resume`, `Job`, `Match`, `Application` |
 | 3 | **Authentication** | `app/auth.py` | JWT bearer tokens, PBKDF2 password hashing (stdlib only, no native build deps) |
 | 4 | **Background / cron jobs** | `app/scheduler.py` | APScheduler daily job: scrape → score → report → email |
 | 5 | **Reporting (PDF + email)** | `app/reports.py`, `app/emailer.py` | ReportLab-generated digest, delivered via SMTP |
