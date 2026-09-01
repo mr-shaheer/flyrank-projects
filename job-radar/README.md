@@ -1,17 +1,24 @@
+<div align="center">
+
 # 🎯 JobRadar
 
-**AI-powered job match & application tracker.** Scrapes fresh postings, scores them against your resume with an LLM, and emails you a ranked PDF digest - every day, automatically.
+### AI-powered job match & application tracker
 
-Built as a capstone project for a Backend AI Engineering internship.
+Scrapes fresh postings, ranks them by semantic fit, scores the top candidates with an LLM,
+and emails you a ranked PDF digest — every day, automatically.
 
-<p>
-  <img alt="Python" src="https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white">
-  <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white">
-  <img alt="SQLite" src="https://img.shields.io/badge/DB-SQLite-003B57?logo=sqlite&logoColor=white">
-  <img alt="Gemini" src="https://img.shields.io/badge/LLM-Gemini-4285F4?logo=googlegemini&logoColor=white">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
-  <img alt="Status" src="https://img.shields.io/badge/status-capstone--ready-brightgreen">
-</p>
+*Built as a capstone project for a Backend AI Engineering internship.*
+
+<br/>
+
+<img alt="Python" src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white" height="28">
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.141-009688?style=for-the-badge&logo=fastapi&logoColor=white" height="28">
+<img alt="SQLite" src="https://img.shields.io/badge/DB-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" height="28">
+<img alt="Gemini" src="https://img.shields.io/badge/LLM-Gemini-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white" height="28">
+<img alt="License" src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" height="28">
+<img alt="Status" src="https://img.shields.io/badge/status-capstone--ready-brightgreen?style=for-the-badge" height="28">
+
+</div>
 
 ---
 
@@ -19,11 +26,11 @@ Built as a capstone project for a Backend AI Engineering internship.
 
 - [The problem](#-the-problem)
 - [The solution](#-the-solution)
-- [How it works - the daily flow](#-how-it-works--the-daily-flow)
+- [How it works — the daily flow](#-how-it-works--the-daily-flow)
 - [Architecture](#-architecture)
-- [The 8 concepts implemented](#-the-8-concepts-implemented)
+- [The 9 concepts implemented](#-the-9-concepts-implemented)
 - [Quickstart](#-quickstart)
-- [Try it in 90 seconds - full demo walkthrough](#-try-it-in-90-seconds--full-demo-walkthrough)
+- [Try it in 90 seconds — full demo walkthrough](#-try-it-in-90-seconds--full-demo-walkthrough)
 - [API reference](#-api-reference)
 - [Environment variables](#-environment-variables)
 - [Project structure](#-project-structure)
@@ -43,28 +50,30 @@ Job hunting is repetitive, low-signal work:
 - Every posting takes a couple of minutes to read before you even know if it's worth applying to.
 - Spreadsheet trackers record *what* you applied to, but nothing tells you *why* a role is or isn't a fit before you spend the time.
 
-There's no free tool that closes this loop automatically: **ingest → evaluate fit → tell you why → track the outcome.**
+There's no free tool that closes this loop automatically: **ingest → rank by fit → tell you why → track the outcome.**
 
 ## 💡 The solution
 
 JobRadar closes that loop as a backend service:
 
 1. **Scrapes** fresh remote job postings on a schedule.
-2. **Scores** each one against your resume using an LLM - a 0–100 fit score plus a one-sentence reason.
-3. **Reports** your top matches as a PDF, delivered by email every morning.
-4. Lets you **track applications** (saved → applied → interviewing → offer/rejected) through a REST API.
+2. **Ranks** every unscored posting against your resume with sentence-embedding similarity, so only the most relevant jobs are considered.
+3. **Scores** the top candidates with an LLM — a 0–100 fit score plus a one-sentence reason.
+4. **Reports** your top matches as a PDF, delivered by email every morning.
+5. Lets you **track applications** (saved → applied → interviewing → offer/rejected) through a REST API.
 
 No manual checking. No re-reading postings you're not qualified for. You wake up to a ranked shortlist.
 
 ---
 
-## 🔄 How it works - the daily flow
+## 🔄 How it works — the daily flow
 
 ```mermaid
 sequenceDiagram
     participant Cron as ⏰ Daily Scheduler
     participant Scraper as 🌐 Scraper
     participant DB as 🗄️ Database
+    participant Retr as 🔎 Semantic Retrieval
     participant LLM as 🤖 Gemini (via OpenAI Agents SDK)
     participant PDF as 📄 PDF Report
     participant Mail as 📧 Email
@@ -72,8 +81,10 @@ sequenceDiagram
     Cron->>Scraper: Trigger daily run (7am)
     Scraper->>Scraper: Fetch postings from RemoteOK API
     Scraper->>DB: Upsert new jobs (skip duplicates)
-    Cron->>DB: For each user, load active resume
-    DB->>LLM: Send resume + unscored job (cache miss only)
+    Cron->>DB: For each user, load active resume + unscored jobs
+    DB->>Retr: Embed resume + unscored jobs (MiniLM)
+    Retr-->>DB: Keep top-K most similar jobs only
+    DB->>LLM: Send resume + shortlisted job (cache miss only)
     LLM-->>DB: Return {score, reason} as structured output
     Note over DB: Already-scored pairs are skipped -<br/>the matches table IS the cache
     Cron->>PDF: Build ranked digest from all matches
@@ -81,7 +92,7 @@ sequenceDiagram
     Mail-->>Cron: Sent (or logged & skipped if SMTP unset)
 ```
 
-The exact same steps are also exposed as on-demand API endpoints (`POST /jobs/scrape`, `POST /matches/run`, `GET /reports/me`), so you can trigger the whole cycle manually instead of waiting for 7am - useful for demos, and for re-scoring right after you update your resume.
+The exact same steps are also exposed as on-demand API endpoints (`POST /jobs/scrape`, `POST /matches/run`, `GET /reports/me`), so you can trigger the whole cycle manually instead of waiting for 7am — useful for demos, and for re-scoring right after you update your resume.
 
 ---
 
@@ -110,6 +121,7 @@ flowchart TB
     subgraph Background["Background layer"]
         CRON["APScheduler<br/>daily cron job"]
         SCRAPE["scraper.py<br/>RemoteOK API + offline fallback"]
+        RETR["retrieval.py<br/>MiniLM sentence embeddings<br/>+ cosine similarity"]
         LLM["llm.py<br/>Gemini via OpenAI Agents SDK<br/>+ keyword-overlap fallback"]
         PDF["reports.py<br/>ReportLab PDF builder"]
         MAIL["emailer.py<br/>SMTP + graceful skip"]
@@ -120,26 +132,27 @@ flowchart TB
     JOBS -.reads through.-> CACHE
 
     CRON --> SCRAPE --> DB
-    CRON --> LLM --> DB
+    CRON --> RETR --> LLM --> DB
     CRON --> PDF --> MAIL
     REP --> PDF
-    MATCH --> LLM
+    MATCH --> RETR
 ```
 
 ---
 
-## ✅ The 8 concepts implemented
+## ✅ The 9 concepts implemented
 
 | # | Concept | Where | Notes |
-|---|---|---|---|
+|:-:|---|---|---|
 | 1 | **API endpoints** | `app/routers/` | 6 routers, full REST API, auto-documented at `/docs` |
-| 2 | **Database** | `app/models.py` | SQLite + SQLAlchemy ORM - `User`, `Resume`, `Job`, `Match`, `Application` |
+| 2 | **Database** | `app/models.py` | SQLite + SQLAlchemy ORM — `User`, `Resume`, `Job`, `Match`, `Application` |
 | 3 | **Authentication** | `app/auth.py` | JWT bearer tokens, PBKDF2 password hashing (stdlib only, no native build deps) |
-| 4 | **Background / cron jobs** | `app/scheduler.py` | APScheduler daily job: scrape → score → report → email |
+| 4 | **Background / cron jobs** | `app/scheduler.py` | APScheduler daily job: scrape → retrieve → score → report → email |
 | 5 | **Reporting (PDF + email)** | `app/reports.py`, `app/emailer.py` | ReportLab-generated digest, delivered via SMTP |
 | 6 | **Caching** | `app/cache.py`, `app/pipeline.py` | In-memory TTL cache on job listings **+** the `matches` table doubles as a permanent score cache — a resume/job pair is never re-sent to the LLM |
 | 7 | **LLM integration** | `app/llm.py` | Gemini, called via the **OpenAI Agents SDK** (`Agent` / `Runner` / `OpenAIChatCompletionsModel`) against Gemini's OpenAI-compatible endpoint, with structured (`Pydantic`) output |
 | 8 | **Web scraping** *(bonus swap-in)* | `app/scraper.py` | Pulls live postings from RemoteOK's public API |
+| 9 | **Semantic retrieval** *(bonus swap-in)* | `app/retrieval.py` | Embeds resume + jobs with `sentence-transformers` (MiniLM) and ranks by cosine similarity, so only the top-K most relevant postings are ever sent to the LLM |
 
 > 🛡️ Every network-dependent piece (scraper, LLM, email) has a **graceful offline fallback** — the whole pipeline runs end-to-end with **zero API keys configured**. This was a deliberate design choice, not an afterthought: see [Design decisions](#-design-decisions--trade-offs).
 
@@ -266,7 +279,7 @@ That's the entire product, end to end, in seven calls.
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/matches/run` | Score every unscored job against your active resume |
+| `POST` | `/matches/run` | Shortlist unscored jobs by semantic similarity, then score the top candidates against your active resume |
 | `GET` | `/matches/me` | List your matches, ranked by score, highest first |
 
 </details>
@@ -322,22 +335,23 @@ See `.env.example` for the full, commented template.
 jobradar/
 ├── app/
 │   ├── main.py              # FastAPI app, router wiring, lifespan (DB init + scheduler)
-│   ├── config.py             # Settings, all from env vars with safe defaults
-│   ├── database.py           # SQLAlchemy engine/session
-│   ├── models.py             # ORM models: User, Resume, Job, Match, Application
-│   ├── schemas.py            # Pydantic request/response schemas
-│   ├── auth.py                # JWT + PBKDF2 password hashing
-│   ├── cache.py               # In-memory TTL cache
-│   ├── scraper.py             # RemoteOK scraping + offline fallback
-│   ├── llm.py                  # Gemini scoring via OpenAI Agents SDK + offline fallback
-│   ├── pipeline.py            # Scoring orchestration (cache-aware)
-│   ├── reports.py             # PDF digest generation (ReportLab)
-│   ├── emailer.py             # SMTP delivery + graceful skip
-│   ├── scheduler.py           # APScheduler daily cron job
-│   └── routers/                # auth, resumes, jobs, matches, applications, reports
+│   ├── config.py            # Settings, all from env vars with safe defaults
+│   ├── database.py          # SQLAlchemy engine/session
+│   ├── models.py            # ORM models: User, Resume, Job, Match, Application
+│   ├── schemas.py           # Pydantic request/response schemas
+│   ├── auth.py              # JWT + PBKDF2 password hashing
+│   ├── cache.py             # In-memory TTL cache
+│   ├── scraper.py           # RemoteOK scraping + offline fallback
+│   ├── retrieval.py         # Semantic retrieval — MiniLM embeddings + cosine similarity
+│   ├── llm.py                # Gemini scoring via OpenAI Agents SDK + offline fallback
+│   ├── pipeline.py           # Scoring orchestration (retrieval-aware, cache-aware)
+│   ├── reports.py            # PDF digest generation (ReportLab)
+│   ├── emailer.py            # SMTP delivery + graceful skip
+│   ├── scheduler.py          # APScheduler daily cron job
+│   └── routers/               # auth, resumes, jobs, matches, applications, reports
 ├── requirements.txt
 ├── .env.example
-├── test_smoke.py              # End-to-end test, no API keys required
+├── test_smoke.py             # End-to-end test, no API keys required
 └── README.md
 ```
 
@@ -355,13 +369,35 @@ Runs the **entire product flow** in one script — register, login, upload resum
 
 ## 🛠 Tech stack
 
+<div align="center">
+
+<img alt="Python" src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" height="32">
+<img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" height="32">
+<img alt="SQLite" src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" height="32">
+<img alt="SQLAlchemy" src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=python&logoColor=white" height="32">
+<img alt="JWT" src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" height="32">
+<br/><br/>
+<img alt="APScheduler" src="https://img.shields.io/badge/APScheduler-2E7D32?style=for-the-badge&logo=clockify&logoColor=white" height="32">
+<img alt="ReportLab" src="https://img.shields.io/badge/ReportLab-B71C1C?style=for-the-badge&logo=adobeacrobatreader&logoColor=white" height="32">
+<img alt="Gemini" src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white" height="32">
+<img alt="OpenAI Agents SDK" src="https://img.shields.io/badge/OpenAI%20Agents%20SDK-412991?style=for-the-badge&logo=openai&logoColor=white" height="32">
+<br/><br/>
+<img alt="Sentence Transformers" src="https://img.shields.io/badge/Sentence--Transformers-FF6F00?style=for-the-badge&logo=huggingface&logoColor=white" height="32">
+<img alt="PyTorch" src="https://img.shields.io/badge/PyTorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white" height="32">
+<img alt="Requests" src="https://img.shields.io/badge/Requests-000000?style=for-the-badge&logo=python&logoColor=white" height="32">
+
+</div>
+
+<br/>
+
 | Layer | Choice | Why |
-|---|---|---|
+|:-:|---|---|
 | API framework | **FastAPI** | Async, typed, auto-generates OpenAPI docs |
 | Database | **SQLite** + SQLAlchemy | Zero setup; swap `DATABASE_URL` for Postgres later with no code changes |
 | Auth | **PyJWT** + stdlib PBKDF2 | No native bcrypt build headaches, no extra service |
 | Scheduler | **APScheduler** | In-process cron, no external infra needed |
 | PDF | **ReportLab** | Fast, dependency-light table/paragraph rendering |
+| Semantic retrieval | **Sentence-Transformers** (MiniLM) + cosine similarity | Cuts LLM calls by pre-filtering to the top-K most relevant jobs before scoring |
 | LLM | **Gemini**, via **OpenAI Agents SDK** | Free tier, structured (`Pydantic`) output, agent framework reused as taught in the program |
 | Scraping | **Requests** → RemoteOK public API | No auth needed, stable JSON, permissive for personal use |
 
@@ -373,6 +409,9 @@ Everything is free-tier / open source. No credit card required.
 
 **Why does everything have an offline fallback?**
 Grading and demos shouldn't depend on a live API key working at the exact moment someone reviews the repo. Every external call — scraping, LLM scoring, email — degrades to a deterministic, testable substitute instead of throwing a 500. This is also just good production practice: a flaky third-party API shouldn't take down your whole pipeline.
+
+**Why rank with semantic retrieval before calling the LLM?**
+Embedding a resume against every unscored job and keeping only the top-K most similar (via `sentence-transformers` + cosine similarity) means the LLM is only ever asked to judge postings that are already plausible fits. It's cheaper, faster, and keeps the digest focused on genuinely relevant roles instead of scoring noise.
 
 **Why is the `matches` table also the cache?**
 LLM calls cost money and time. Once a (user, job) pair has been scored, it's never re-sent — the scheduler and the manual `/matches/run` endpoint both check "has this pair been scored?" before calling the LLM. This makes daily re-runs cheap: only genuinely new postings get scored.
@@ -392,6 +431,7 @@ Gemini exposes an OpenAI-compatible endpoint, so `OpenAIChatCompletionsModel` (f
 - [ ] Postgres (Supabase/Neon free tier) for multi-instance deploys
 - [ ] Deploy API + scheduler as separate services on Render/Railway free tier
 - [ ] Additional scraping sources beyond RemoteOK
+- [ ] Configurable top-K for semantic retrieval, exposed as a user setting
 
 ---
 
@@ -420,3 +460,17 @@ Yes — swap the `AsyncOpenAI(base_url=...)` in `app/llm.py` for any other OpenA
 
 Add a new fetch function in `app/scraper.py` following the same shape as `_fetch_raw_jobs`, and merge its results before the upsert loop in `scrape_and_store_jobs`. The `external_id` uniqueness constraint on `Job` already prevents duplicates across sources.
 </details>
+
+<details>
+<summary><b>Why doesn't the LLM score every job?</b></summary>
+
+`app/retrieval.py` embeds the resume and all unscored jobs, then keeps only the top-K most semantically similar postings (default 10) before they're sent to the LLM in `app/pipeline.py`. This keeps scoring fast and cheap without sacrificing match quality — a job with near-zero semantic overlap with your resume was never going to score well anyway.
+</details>
+
+<div align="center">
+
+<br/>
+
+Made with ☕ and FastAPI — a backend AI engineering capstone.
+
+</div>
