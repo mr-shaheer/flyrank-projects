@@ -164,7 +164,7 @@ flowchart TB
 <summary><b>1. Clone & install</b></summary>
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/mr-shaheer/flyrank-projects.git
 cd jobradar
 pip install -r requirements.txt
 ```
@@ -471,6 +471,6 @@ Add a new fetch function in `app/scraper.py` following the same shape as `_fetch
 
 <br/>
 
-Made with ☕ and FastAPI — a backend AI engineering capstone.
+Built with Python and FastAPI — a backend AI engineering capstone.
 
 </div>
