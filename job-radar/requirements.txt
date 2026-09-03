@@ -10,4 +10,5 @@ requests==2.34.2
 python-dotenv==1.2.3
 openai==3.6.0
 openai-agents==0.22.0
-
+sentence-transformers
+torch
