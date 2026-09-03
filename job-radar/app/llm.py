@@ -53,7 +53,7 @@ def _fallback_score(resume_text: str, job_title: str, job_description: str) -> t
     return score, f"[offline scorer] Keyword overlap with resume: {top_terms}"
 
 
-_agent = None  # lazily built and cached — avoids re-creating the client per call
+_agent = None
 
 
 def _get_agent():
@@ -64,8 +64,6 @@ def _get_agent():
     from agents import Agent, OpenAIChatCompletionsModel, set_tracing_disabled
     from openai import AsyncOpenAI
 
-    # Tracing defaults to exporting to OpenAI's platform, which needs an
-    # OpenAI API key we don't have (and don't want) here — disable it.
     set_tracing_disabled(True)
 
     gemini_client = AsyncOpenAI(
@@ -107,6 +105,6 @@ def score_resume_against_job(resume_text: str, job_title: str, job_description: 
         result = Runner.run_sync(agent, prompt)
         output: MatchScore = result.final_output
         return max(0.0, min(100.0, float(output.score))), output.reason.strip()
-    except Exception as exc:  # noqa: BLE001 - never let a scoring failure break the pipeline
+    except Exception as exc: 
         score, reason = _fallback_score(resume_text, job_title, job_description)
         return score, f"{reason} (LLM call failed, used fallback: {exc})"
