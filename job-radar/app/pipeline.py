@@ -28,11 +28,9 @@ def score_unmatched_jobs_for_user(
     else:
         unscored_jobs = db.query(models.Job).all()
 
-    # Nothing new to score
     if not unscored_jobs:
         return 0
-
-    # NEW: Keep only the top 10 semantically similar jobs
+        
     top_jobs = get_top_jobs(
         resume_text=resume.content_text,
         jobs=unscored_jobs,
